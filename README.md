@@ -1,3 +1,6 @@
+this repo pulled from: https://github.com/AndrewRPorter/flask-nginx-tutorial
+
+
 Connecting Flask and Gunicorn to Nginx with docker-compose
 ==========================================================
 

@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   nginx:
-    image: nginx:1.15
+    image: nginx:1.18-alpine
     container_name: nginx
     volumes:
       - ./default.conf:/etc/nginx/conf.d/default.conf
@@ -12,6 +12,7 @@ services:
       - my-network
     depends_on:
       - flask
+      - db
   flask:
     build:
       context: ./
@@ -20,10 +21,25 @@ services:
     command: gunicorn --bind 0.0.0.0:8000 --workers 4 "app.create_app:create_app()"
     volumes:
       - ./:/var/www
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
     networks:
       my-network:
         aliases:
           - flask-app
+  db:
+    image: postgres:14-alpine
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ~/apps/postgres:/var/lib/postgresql/data
+    networks:
+      - my-network
 
 networks:
   my-network:
